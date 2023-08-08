@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'core',
     'profiles_api',
+    'profiles_feed',
 ]
 
 MIDDLEWARE = [
