@@ -30,4 +30,5 @@ urlpatterns = [
         name='api-docs',
     ),
     path('api/profile/', include('profiles_api.urls')),
+    path('api/profiles_feed/', include('profiles_feed.urls')),
 ]
