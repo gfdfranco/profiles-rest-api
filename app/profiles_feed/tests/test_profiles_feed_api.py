@@ -16,6 +16,11 @@ from profiles_feed.serializers import ProfilesFeedSerializer
 FEED_URL = reverse('profiles_feed:profilesfeed-list')
 
 
+def detail_url(recipe_id):
+    """Create and return a recipe detail URL."""
+    return reverse('profiles_feed:profilesfeed-detail', args=[recipe_id])
+
+
 def create_profiles_feed(user, **params):
     """Create and return a sample feed."""
     defaults = {
@@ -78,3 +83,26 @@ class PrivateProfilesFeedApiTests(TestCase):
         serializer = ProfilesFeedSerializer(feeds, many=True)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data, serializer.data)
+
+    def test_get_profiles_feed_detail(self):
+        """Test get profiles feed detail."""
+        feed = create_profiles_feed(user=self.user)
+
+        url = detail_url(feed.id)
+        res = self.client.get(url)
+
+        serializer = ProfilesFeedSerializer(feed)
+        self.assertEqual(res.data, serializer.data)
+
+    def test_create_recipe(self):
+        """Test creating a profiles feed."""
+        payload = {
+            'description': 'Sample description',
+        }
+        res = self.client.post(FEED_URL, payload)
+
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        feed = ProfilesFeed.objects.get(id=res.data['id'])
+        for k, v in payload.items():
+            self.assertEqual(getattr(feed, k), v)
+        self.assertEqual(feed.user, self.user)
